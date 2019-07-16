@@ -1,3 +1,13 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright (c) 2019 Sartura Ltd.
+ *
+ * Author: Juraj Vijtiuk <juraj.vijtiuk@sartura.hr>
+ *
+ * https://www.sartura.hr/
+ */
+
 #include <string.h>
 
 #include "memory.h"
