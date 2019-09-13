@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright (c) 2015-2019 Sartura Ltd.
+ * Copyright (c) 2019 Sartura Ltd.
  *
  * Author: Domagoj Pintaric <domagoj.pintaric@sartura.hr>
  *
