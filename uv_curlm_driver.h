@@ -10,12 +10,12 @@
 
 // #include "uv_curlm_driver.h"
 // call UV_CURLM_DRIVER_INIT()
-// attach curl easy handles using curl_multi_add_handle(curl_multi,
-// <curl_easy_handle_name>); implement curl_multi_info_check() and call
-// curl_multi_info_read() call UV_CURLM_DRIVER_CLEAN()
+// attach curl easy handles using curl_multi_add_handle(curl_multi, <curl_easy_handle_name>);
+// implement curl_multi_info_check() and call curl_multi_info_read()
+// call UV_CURLM_DRIVER_CLEAN()
 
-#include <curl/curl.h>
 #include <uv.h>
+#include <curl/curl.h>
 
 #include "debug.h"
 #include "memory.h"
@@ -117,8 +117,7 @@ static int curl_socket_poll_start_cb(CURL *curl_easy, curl_socket_t curl_socket,
 	if (socketp) {
 		curl_socket_poll = (uv_poll_t *) socketp;
 	} else {
-		// create curl_socket_poll and attach curl_socket to it's data pointer for
-		// usage in curl_socket_poll_cb()
+		// create curl_socket_poll and attach curl_socket to it's data pointer for usage in curl_socket_poll_cb()
 		curl_socket_poll = xcalloc(1, sizeof(uv_poll_t));
 		curl_socket_poll->data = xcalloc(1, sizeof(curl_socket_t));
 		*((curl_socket_t *) curl_socket_poll->data) = curl_socket;
