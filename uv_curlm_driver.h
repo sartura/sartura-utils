@@ -9,10 +9,10 @@
  */
 
 // #include "uv_curlm_driver.h"
-// call UV_CURLM_DRIVER_INIT()
+// call uv_curlm_driver_init()
 // attach curl easy handles using curl_multi_add_handle(curl_multi, <curl_easy_handle_name>);
 // implement curl_multi_info_check() and call curl_multi_info_read()
-// call UV_CURLM_DRIVER_CLEAN()
+// call uv_curlm_driver_clean()
 
 #include <uv.h>
 #include <curl/curl.h>
@@ -31,25 +31,32 @@ static void curl_multi_info_check(void);
 static CURLM *curl_multi = NULL;
 static uv_timer_t curl_multi_timer = {0};
 
-#define UV_CURLM_DRIVER_INIT()                                                                                                                       \
-	do {                                                                                                                                             \
-		curl_multi = curl_multi_init();                                                                                                              \
-		if (curl_multi == NULL) {                                                                                                                    \
-			_error("failed to init curl multi hadndle");                                                                                             \
-			return -1;                                                                                                                               \
-		}                                                                                                                                            \
-		curl_multi_setopt(curl_multi, CURLMOPT_TIMERFUNCTION, curl_multi_timer_start_cb);                                                            \
-		curl_multi_setopt(curl_multi, CURLMOPT_SOCKETFUNCTION, curl_socket_poll_start_cb);                                                           \
-		uv_timer_init(uv_default_loop(), &curl_multi_timer);                                                                                         \
-	} while (0)
+static int uv_curlm_driver_init(void)
+{
+	curl_multi = curl_multi_init();
+	if (curl_multi == NULL) {
+		_error("failed to init curl multi hadndle");
+		return -1;
+	}
+	curl_multi_setopt(curl_multi, CURLMOPT_TIMERFUNCTION, curl_multi_timer_start_cb);
+	curl_multi_setopt(curl_multi, CURLMOPT_SOCKETFUNCTION, curl_socket_poll_start_cb);
+	uv_timer_init(uv_default_loop(), &curl_multi_timer);
 
-#define UV_CURLM_DRIVER_CLEAN()                                                                                                                      \
-	do {                                                                                                                                             \
-		curl_multi_cleanup(curl_multi);                                                                                                              \
-		if (uv_has_ref((uv_handle_t *) &curl_multi_timer) && !uv_is_closing((uv_handle_t *) &curl_multi_timer)) {                                    \
-			uv_close((uv_handle_t *) &curl_multi_timer, NULL);                                                                                       \
-		}                                                                                                                                            \
-	} while (0)
+	return 0;
+}
+
+static int uv_curlm_driver_clean(void)
+{
+	if (curl_multi) {
+		curl_multi_cleanup(curl_multi);
+	}
+
+	if (uv_has_ref((uv_handle_t *) &curl_multi_timer) && !uv_is_closing((uv_handle_t *) &curl_multi_timer)) {
+		uv_close((uv_handle_t *) &curl_multi_timer, NULL);
+	}
+
+	return 0;
+}
 
 static int curl_debug_cb(CURL *handle, curl_infotype type, char *data, size_t size, void *userp)
 {
