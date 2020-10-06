@@ -49,6 +49,7 @@ static int uv_curlm_driver_clean(void)
 {
 	if (curl_multi) {
 		curl_multi_cleanup(curl_multi);
+		curl_multi = NULL;
 	}
 
 	if (uv_has_ref((uv_handle_t *) &curl_multi_timer) && !uv_is_closing((uv_handle_t *) &curl_multi_timer)) {
