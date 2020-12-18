@@ -14,6 +14,8 @@
 // implement curl_multi_info_check() and call curl_multi_info_read()
 // call uv_curlm_driver_clean()
 
+#include <stdbool.h>
+
 #include <uv.h>
 #include <curl/curl.h>
 
@@ -52,7 +54,7 @@ static int uv_curlm_driver_clean(void)
 		curl_multi = NULL;
 	}
 
-	if (uv_has_ref((uv_handle_t *) &curl_multi_timer) && !uv_is_closing((uv_handle_t *) &curl_multi_timer)) {
+	if (uv_has_ref((uv_handle_t *) &curl_multi_timer) && uv_is_closing((uv_handle_t *) &curl_multi_timer) == false) {
 		uv_close((uv_handle_t *) &curl_multi_timer, NULL);
 	}
 
